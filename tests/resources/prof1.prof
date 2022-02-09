@@ -1,0 +1,1 @@
+{"packages": {"pckg1": ["opt2", "opt1"], "pckg2": []}, "document_class_name": "classname1", "document_class_options": ["opt2", "opt1"], "preamble": "thisisapreamble", "question_environments": {"env1": [2, 4], "env2": [0, 1]}, "header": "thisisaheader"}
