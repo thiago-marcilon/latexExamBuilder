@@ -1,6 +1,5 @@
 wheel==0.36.2
-PyLatex==1.4.1
 PyQt5==5.15.6 
 tinydb==4.6.1
 pytest==6.2.5
-asyncqt==0.8.0
+qasync==0.23.0
