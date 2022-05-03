@@ -87,6 +87,7 @@ class MainWindow(QMainWindow, mw.Ui_MainWindow):
         self.action_delete_all_search.setParent(self.tableview_search)
         self.action_add_selected_search.setParent(self.tableview_search)
         self.action_preview_all_search.setParent(self.tableview_search)
+        self.tableview_search.addAction(self.action_preview_all_search)
         self.action_delete_all_search.triggered.connect(self.__delete_all_search)
         self.action_add_selected_search.triggered.connect(self.__add_selected_search)
         self.action_preview_all_search.triggered.connect(self.__preview_all_search)

@@ -13,7 +13,7 @@ class DBHandler:
         :type fullpath: str
         """
         self.__fullpath = os.path.abspath(fullpath)
-        self.__db = tdb.TinyDB(self.fullpath, ensure_ascii=False)
+        self.__db = tdb.TinyDB(self.fullpath, encoding="utf-8", ensure_ascii=False)
 
     @property
     def fullpath(self):
