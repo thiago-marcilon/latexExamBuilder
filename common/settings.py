@@ -11,18 +11,14 @@ settings_file_name = 'settings'
 preview_profile_document_class = 'article'
 preview_profile_document_options = ('oneside', 'a4paper', '10pt')
 preview_profile_packages_required = {}
-preview_profile_preamble = r'\newenvironment{boxed}{' \
-                           r'\begin{center}' \
-                           r'\begin{tabular}{|p{0.9\textwidth}|}' \
-                           r'\hline\\' \
+preview_profile_preamble = r'\newenvironment{question}{' \
+                           r'\noindent' \
                            r'}' \
                            r'{' \
-                           r'\\\\\hline' \
-                           r'\end{tabular}' \
-                           r'\end{center}' \
+                           r'\\\\' \
                            r'}'
 preview_profile_header = ''
-preview_profile_environments = {"boxed": (0, 0)}
+preview_profile_environments = {"question": (0, 0)}
 
 
 def search_path(oss, name_path_list):
