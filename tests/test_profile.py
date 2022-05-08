@@ -22,6 +22,22 @@ class TestProfile:
                profile.question_environment_list == profile2.question_environment_list and \
                profile.package_list == profile2.package_list
 
+    def test_find_placeholders(self):
+        assert prof.Profile.find_placeholders('%%thi%s%\ni%s\na%%%ph1 %\n%ok%') == {'s', 'ph1 ', 'ok'} and\
+               prof.Profile.find_placeholders('t%hi%s\ni%%s%%\na%\n% header %th%') == {'hi', ' header '}
+
+    def test_fill_preamble_header(self):
+        profile = prof.Profile('prof1', 'resources')
+        profile.set_document_class('classname1', ('opt1', 'opt2'))
+        profile.add_package('pckg1', ('opt1', 'opt2'))
+        profile.add_package('pckg2', ())
+        profile.add_question_environment('env1', 2, 4)
+        profile.add_question_environment('env2', 0, 1)
+        profile.preamble = '% %thi%s%\ni%s\na%%%ph1 %\n%ok%'
+        profile.header = 't%hi%s\ni%%s%%\na%\n% header %th%'
+        assert profile.filled_preamble({'s': 's', 'ph1 ': 'preamble'}) == '% %this\ni%s\na%%preamble\n%ok%' and \
+               profile.filled_header({'hi': ' ', 'notph': 'ignore', ' header ': 'header'}) == 't%hi%s\ni%%s%%\na%\nheaderth%'
+
     def test_add_question_environment(self):
         profile = prof.Profile('prof1')
         profile.add_question_environment('env1', 2, 3)

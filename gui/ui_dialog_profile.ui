@@ -42,16 +42,26 @@
      </property>
      <item row="1" column="0">
       <widget class="QLabel" name="label">
+       <property name="whatsThis">
+        <string>Name of the document class.</string>
+       </property>
        <property name="text">
         <string>Document Class name:</string>
        </property>
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="lineedit_class_name"/>
+      <widget class="QLineEdit" name="lineedit_class_name">
+       <property name="whatsThis">
+        <string>Name of the document class.</string>
+       </property>
+      </widget>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_2">
+       <property name="whatsThis">
+        <string>Options for the document class separated by comma.</string>
+       </property>
        <property name="text">
         <string>Document Class options:</string>
        </property>
@@ -59,13 +69,19 @@
      </item>
      <item row="2" column="1">
       <widget class="QLineEdit" name="lineedit_class_options">
+       <property name="whatsThis">
+        <string>Options for the document class separated by comma.</string>
+       </property>
        <property name="placeholderText">
-        <string>Options for the document class separated by comma</string>
+        <string>Options for the document class separated by comma.</string>
        </property>
       </widget>
      </item>
      <item row="4" column="0">
       <widget class="QLabel" name="label_3">
+       <property name="whatsThis">
+        <string>Everything that comes after the last usepackage and before begin{document}. You can add placeholders between two % symbols which can be replaced by strings of your choice at compilation time.</string>
+       </property>
        <property name="text">
         <string>Preamble:</string>
        </property>
@@ -73,13 +89,19 @@
      </item>
      <item row="4" column="1">
       <widget class="QPlainTextEdit" name="textedit_preamble">
+       <property name="whatsThis">
+        <string>Everything that comes after the last usepackage and before begin{document}. You can add placeholders between two % symbols which can be replaced by strings of your choice at compilation time.</string>
+       </property>
        <property name="placeholderText">
-        <string>Everything that comes after the last \usepackage and before \begin{document}</string>
+        <string>Everything that comes after the last \usepackage and before \begin{document}. It supports placeholders.</string>
        </property>
       </widget>
      </item>
      <item row="5" column="0">
       <widget class="QLabel" name="label_4">
+       <property name="whatsThis">
+        <string>Everything that comes after begin{document} and before the questions themselves. You can add placeholders between two % symbols which can be replaced by strings of your choice at compilation time.</string>
+       </property>
        <property name="text">
         <string>Header:</string>
        </property>
@@ -87,8 +109,11 @@
      </item>
      <item row="5" column="1">
       <widget class="QPlainTextEdit" name="textedit_header">
+       <property name="whatsThis">
+        <string>Everything that comes after begin{document} and before the questions themselves. You can add placeholders between two % symbols which can be replaced by strings of your choice at compilation time.</string>
+       </property>
        <property name="placeholderText">
-        <string>Everything that comes after \begin{document} and before the questions themselves</string>
+        <string>Everything that comes after \begin{document} and before the questions themselves. It supports placeholders.</string>
        </property>
       </widget>
      </item>
@@ -108,6 +133,9 @@
      </item>
      <item row="6" column="0">
       <widget class="QLabel" name="label_6">
+       <property name="whatsThis">
+        <string>Environments that will wrap the questions.</string>
+       </property>
        <property name="text">
         <string>Question environments:</string>
        </property>
@@ -127,6 +155,9 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="whatsThis">
+        <string>Environments that will wrap the questions.</string>
+       </property>
        <property name="editTriggers">
         <set>QAbstractItemView::NoEditTriggers</set>
        </property>
@@ -140,6 +171,9 @@
      </item>
      <item row="3" column="0">
       <widget class="QLabel" name="label_7">
+       <property name="whatsThis">
+        <string>Latex packages required to compile the question.</string>
+       </property>
        <property name="text">
         <string>Required packages:</string>
        </property>
@@ -158,6 +192,9 @@
          <width>200</width>
          <height>16777215</height>
         </size>
+       </property>
+       <property name="whatsThis">
+        <string>Latex packages required to compile the question.</string>
        </property>
        <property name="alternatingRowColors">
         <bool>true</bool>

@@ -27,8 +27,7 @@ def context_class(request):
                        '\\newcommand{\\department}{Testing Software Department}\n' \
                        '\\newcommand{\\course}{Testing 101}\n' \
                        '\\newcommand{\\professor}{Dr. McNeeley}\n' \
-                       '\\newcommand{\\assessment}{Final Assessment}\n' \
-                       '\\newcommand{\\dates}{29/02/1600}'
+                       '\\newcommand{\\dates}{%date%}'
     profile.header = '\\onehalfspacing\n' \
                      '\\noindent\\space\\\\\n' \
                      '\\textbf{\\university}\\\\\n' \
@@ -37,7 +36,7 @@ def context_class(request):
                      '\\textbf{Date:} \\dates\\\\\n' \
                      '\\vspace{15pt}\n' \
                      '\\begin{center}\n' \
-                     '\\LARGE{\\textbf{\\assessment}}\n' \
+                     '\\LARGE{\\textbf{Assessment %assess_number%}}\n' \
                      '\\end{center}\n' \
                      '\\vspace{10pt}\n'
     question1 = quest.Question(['key1', 'key2'], '\\hello \\bye', {'babel': ('brazilian', 'english')},
@@ -61,7 +60,8 @@ def context_class(request):
                                {'tikz': (), 'float': (), 'babel': ('english',)}, ('\\newcommand{\\hello}{Olá, Mundo!}',))
     latex_questions = [prof.LatexQuestion(question1, 'question', (), ()),
                        prof.LatexQuestion(question2, 'question', ('1,5',), ())]
-    builder = bld.LatexPdfBuilder('profile_TestLatexPdfBuilder_dumps', 'resources', profile, latex_questions)
+    fillers = {'date': '29/02/1600', 'assess_number': '1'}
+    builder = bld.LatexPdfBuilder('profile_TestLatexPdfBuilder_dumps', 'resources', profile, latex_questions, fillers)
 
     dcs = ['\\documentclass[a4paper, 12pt, oneside]{article}\n',
            '\\documentclass[a4paper, oneside, 12pt]{article}\n',
@@ -88,7 +88,6 @@ def context_class(request):
            '\\newcommand{\\department}{Testing Software Department}\n' \
            '\\newcommand{\\course}{Testing 101}\n' \
            '\\newcommand{\\professor}{Dr. McNeeley}\n' \
-           '\\newcommand{\\assessment}{Final Assessment}\n' \
            '\\newcommand{\\dates}{29/02/1600}\n' \
            '\n'
     defs = ['\\newcommand{\\hello}{Olá, Mundo!}\n\\newcommand{\\bye}{bye bye!}\n',
@@ -103,7 +102,7 @@ def context_class(request):
            '\\textbf{Date:} \\dates\\\\\n' \
            '\\vspace{15pt}\n' \
            '\\begin{center}\n' \
-           '\\LARGE{\\textbf{\\assessment}}\n' \
+           '\\LARGE{\\textbf{Assessment 1}}\n' \
            '\\end{center}\n' \
            '\\vspace{10pt}\n' \
            '\n' \
@@ -147,7 +146,7 @@ class TestLatexPdfBuilder:
 
     def test_generate_tex(self):
         self.builder.generate_tex()
-        assert os.path.getsize(self.builder.fullpath + ".tex") == 1840
+        assert os.path.getsize(self.builder.fullpath + ".tex") == 1797
         with open(self.builder.fullpath + ".tex", encoding="utf-8") as tex:
             file_dumps = tex.read()
         assert file_dumps in self.expected_dumps

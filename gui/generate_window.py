@@ -17,6 +17,7 @@ class GenerateWindow(QMainWindow, gw.Ui_GenerateWindow):
         self.__profile = None
         self.__question_list = questions
         self.__question_hlayouts = []
+        self.groupbox_placeholders = None
         for question in questions:
             horizontallayout_question = QHBoxLayout(self.groupbox_questions)
             self.__question_hlayouts.append(horizontallayout_question)
@@ -56,6 +57,10 @@ class GenerateWindow(QMainWindow, gw.Ui_GenerateWindow):
             QMessageBox.warning(self, 'Mandatory arguments empty!', 'All mandatory arguments fields must be filled.')
             return False
 
+        fillers = {}
+        if self.groupbox_placeholders is not None:
+            fillers = dict([(vbox.itemAt(0).widget().text(), vbox.itemAt(1).widget().text())
+                            for vbox in self.groupbox_placeholders.layout().children()])
         latex_questions = []
         for ind, question in enumerate(self.__question_list):
             hlayout = self.__question_hlayouts[ind]
@@ -75,15 +80,14 @@ class GenerateWindow(QMainWindow, gw.Ui_GenerateWindow):
         if tex_path != '':
             self.current_builder = build.LatexPdfBuilder(os.path.basename(tex_path).removesuffix('.tex'),
                                                          os.path.dirname(tex_path),
-                                                         self.__profile, latex_questions)
+                                                         self.__profile, latex_questions, fillers)
             try:
                 self.current_builder.generate_tex()
+                QMessageBox.information(self, 'Success!', 'The tex file was generated with success!')
+                return True
             except Exception as err:
                 QMessageBox.critical(self, 'Error!', err.args[0])
                 return False
-            else:
-                QMessageBox.information(self, 'Success!', 'The tex file was generated with success!')
-                return True
 
     @qasync.asyncSlot()
     async def __generate_pdf(self, checked=False):
@@ -93,24 +97,24 @@ class GenerateWindow(QMainWindow, gw.Ui_GenerateWindow):
                                                          os.path.dirname(tex_path))
             try:
                 self.current_builder.generate_pdf()
+                QMessageBox.information(self, 'Success!', 'The pdf file was generated with success!')
                 await self.current_builder.pdf_preview()
+                return True
             except Exception as err:
                 QMessageBox.critical(self, 'Error!', err.args[0])
                 return False
-            else:
-                return True
 
     @qasync.asyncSlot()
     async def __generate_tex_pdf(self, checked=False):
         if self.__generate_tex():
             try:
                 self.current_builder.generate_pdf()
+                QMessageBox.information(self, 'Success!', 'The pdf file was generated with success!')
                 await self.current_builder.pdf_preview()
+                return True
             except Exception as err:
                 QMessageBox.critical(self, 'Error!', err.args[0])
                 return False
-            else:
-                return True
 
     @property
     def hlayouts(self):
@@ -123,43 +127,59 @@ class GenerateWindow(QMainWindow, gw.Ui_GenerateWindow):
         except Exception as err:
             QMessageBox.critical(self, 'Error!', err.args[0])
             self.combobox_profile.setCurrentIndex(-1)
-            return
-        for q_index, hlayout in enumerate(self.__question_hlayouts):
-            for index in range(hlayout.count() - 1, 0, -1):
-                hlayout.removeWidget(hlayout.itemAt(index).widget())
-            combobox_env_question = QComboBox(hlayout.parentWidget())
-            combobox_env_question.addItems([env for env, _ in self.__profile.question_environment_list])
-            hlayout.addWidget(combobox_env_question)
+        else:
+            if self.groupbox_placeholders is not None:
+                self.verticalLayout_2.removeWidget(self.groupbox_placeholders)
+                self.groupbox_placeholders.deleteLater()
+                self.groupbox_placeholders = None
+            if self.__profile.placeholders:
+                self.groupbox_placeholders = QGroupBox(self.scrollAreaWidgetContents)
+                self.groupbox_placeholders.setObjectName("groupbox_placeholders")
+                self.groupbox_placeholders.setTitle(qcore.QCoreApplication.translate("GenerateWindow", "Profile Placeholders"))
+                self.verticalLayout_2.insertWidget(1, self.groupbox_placeholders)
+                horizontallayout_placeholders = QHBoxLayout(self.groupbox_placeholders)
+                for placeholder in self.__profile.placeholders:
+                    layout = QVBoxLayout()
+                    layout.addWidget(QLabel(placeholder))
+                    layout.addWidget(QLineEdit())
+                    horizontallayout_placeholders.addLayout(layout)
 
-            def change_environment(layout):
-                def slot_change_environment(current_index):
-                    for ind in range(layout.count() - 1, 1, -1):
-                        layout.removeWidget(layout.itemAt(ind).widget())
+            for q_index, hlayout in enumerate(self.__question_hlayouts):
+                for index in range(hlayout.count() - 1, 0, -1):
+                    hlayout.removeWidget(hlayout.itemAt(index).widget())
+                combobox_env_question = QComboBox(hlayout.parentWidget())
+                combobox_env_question.addItems([env for env, _ in self.__profile.question_environment_list])
+                hlayout.addWidget(combobox_env_question)
 
-                    group_box_opt = QGroupBox('Optional arguments', self)
-                    group_box_opt.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
-                    group_box_opt.setMinimumSize(200, 200)
-                    group_box_opt.setMaximumSize(40000, 40000)
-                    formlayout_opt = QFormLayout(group_box_opt)
-                    if self.__profile.question_environment_list[current_index][1][0] > 0:
-                        for ind in range(self.__profile.question_environment_list[current_index][1][0]):
-                            formlayout_opt.addRow(f'Argument {ind + 1}: ', QLineEdit())
-                    group_box_opt.setLayout(formlayout_opt)
-                    layout.addWidget(group_box_opt)
+                def change_environment(layout):
+                    def slot_change_environment(current_index):
+                        for ind in range(layout.count() - 1, 1, -1):
+                            layout.removeWidget(layout.itemAt(ind).widget())
 
-                    group_box_mand = QGroupBox('Mandatory arguments', self)
-                    group_box_mand.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
-                    group_box_mand.setMinimumSize(200, 200)
-                    group_box_mand.setMaximumSize(40000, 40000)
-                    formlayout_mand = QFormLayout(group_box_mand)
-                    if self.__profile.question_environment_list[current_index][1][1] > 0:
-                        for ind in range(self.__profile.question_environment_list[current_index][1][1]):
-                            formlayout_mand.addRow(f'Argument {ind + 1}: ', QLineEdit())
-                    group_box_mand.setLayout(formlayout_mand)
-                    layout.addWidget(group_box_mand)
+                        group_box_opt = QGroupBox('Optional arguments', self)
+                        group_box_opt.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+                        group_box_opt.setMinimumSize(200, 200)
+                        group_box_opt.setMaximumSize(40000, 40000)
+                        formlayout_opt = QFormLayout(group_box_opt)
+                        if self.__profile.question_environment_list[current_index][1][0] > 0:
+                            for ind in range(self.__profile.question_environment_list[current_index][1][0]):
+                                formlayout_opt.addRow(f'Argument {ind + 1}: ', QLineEdit())
+                        group_box_opt.setLayout(formlayout_opt)
+                        layout.addWidget(group_box_opt)
 
-                return slot_change_environment
+                        group_box_mand = QGroupBox('Mandatory arguments', self)
+                        group_box_mand.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+                        group_box_mand.setMinimumSize(200, 200)
+                        group_box_mand.setMaximumSize(40000, 40000)
+                        formlayout_mand = QFormLayout(group_box_mand)
+                        if self.__profile.question_environment_list[current_index][1][1] > 0:
+                            for ind in range(self.__profile.question_environment_list[current_index][1][1]):
+                                formlayout_mand.addRow(f'Argument {ind + 1}: ', QLineEdit())
+                        group_box_mand.setLayout(formlayout_mand)
+                        layout.addWidget(group_box_mand)
 
-            combobox_env_question.setCurrentIndex(-1)
-            combobox_env_question.currentIndexChanged.connect(change_environment(hlayout))
-            combobox_env_question.setCurrentIndex(0)
+                    return slot_change_environment
+
+                combobox_env_question.setCurrentIndex(-1)
+                combobox_env_question.currentIndexChanged.connect(change_environment(hlayout))
+                combobox_env_question.setCurrentIndex(0)

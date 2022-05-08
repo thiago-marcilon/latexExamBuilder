@@ -22,8 +22,10 @@ class Profile:
         else:
             self.__path = os.path.abspath(path)
         self.__name = name
-        self.preamble = ''
-        self.header = ''
+        self.__preamble_placeholders = set()
+        self.__header_placeholders = set()
+        self.__preamble = ''
+        self.__header = ''
         self.__packages = {}
         self.__question_environments = {}
         self.__document_class_name = ''
@@ -45,6 +47,79 @@ class Profile:
         for env, options in setts.preview_profile_environments.items():
             profile.add_question_environment(env, options[0], options[1])
         return profile
+
+    @property
+    def preamble(self):
+        """Profile's preamble."""
+        return self.__preamble
+
+    @preamble.setter
+    def preamble(self, preamble):
+        self.__preamble_placeholders = self.find_placeholders(preamble)
+        self.__preamble = preamble
+
+    @property
+    def header(self):
+        """Profile's header."""
+        return self.__header
+
+    @header.setter
+    def header(self, header):
+        self.__header_placeholders = self.find_placeholders(header)
+        self.__header = header
+
+    @property
+    def placeholders(self):
+        """Profile's preamble's and header's placeholders."""
+        return self.__preamble_placeholders | self.__header_placeholders
+
+    def filled_preamble(self, fillers):
+        """Fills preamble's placeholders.
+
+        :param fillers: dictionary mapping placeholders to their fillers. If a filler is empty, its respective
+         placeholder remains unchanged.
+        :type fillers: dict [str, str]
+        :return: the string consisting of the preamble filled according to fillers.
+        :rtype: str
+        """
+        preamble = self.preamble
+        for ph, fill in fillers.items():
+            if ph in self.__preamble_placeholders and fill.strip() != '':
+                preamble = preamble.replace('%'+ph+'%', fill)
+        return preamble
+
+    def filled_header(self, fillers):
+        """Fills header's placeholders.
+
+        :param fillers: dictionary mapping placeholders to their fillers. If a filler is empty, its respective
+         placeholder remains unchanged.
+        :type fillers: dict [str, str]
+        :return: the string consisting of the header filled according to fillers.
+        :rtype: str
+        """
+        header = self.header
+        for ph, fill in fillers.items():
+            if ph in self.__header_placeholders and fill.strip() != '':
+                header = header.replace('%'+ph+'%', fill)
+        return header
+
+    @classmethod
+    def find_placeholders(cls, text):
+        """Find all placeholders in text."""
+        ret = set()
+        i = 0
+        length = len(text)
+        while i < length:
+            if text[i] == '%':
+                placeholder_name = ''
+                i += 1
+                while i < length and text[i] != '\n' and text[i] != '%':
+                    placeholder_name += text[i]
+                    i += 1
+                if i < length and text[i] == '%' and placeholder_name.strip() != '':
+                    ret.add(placeholder_name)
+            i += 1
+        return ret
 
     def load(self):
         """Load the contents of the profile file represented by this object."""

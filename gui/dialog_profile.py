@@ -62,7 +62,6 @@ class ProfileDiag(QDialog, uiprofile.Ui_ProfileDialog):
             match_obj = re.fullmatch(r'(.+?): (\d+) optional and (\d+) mandatory parameters', diag_text)
             diag_text = f'{match_obj.group(1)}: {match_obj.group(2)}, {match_obj.group(3)}'
 
-
         match_obj = None
         ok = True
         while not match_obj and ok:

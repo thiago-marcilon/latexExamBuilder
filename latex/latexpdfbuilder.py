@@ -14,7 +14,7 @@ class LatexCompileError(Exception):
 class LatexPdfBuilder:
     """The LatexPdfBuilder object's function is to generate LaTeX documents and pdfs and preview pdfs."""
 
-    def __init__(self, name, path, profile=None, latex_questions=None):
+    def __init__(self, name, path, profile=None, latex_questions=None, fillers=None):
         """
         :param name: the name of the generated .tex and .pdf files.
         :type name: str
@@ -24,11 +24,14 @@ class LatexPdfBuilder:
         :type profile: :py:class:`prof.Profile`
         :param latex_questions: questions to be added to the .tex file.
         :type latex_questions: list of prof.LatexQuestion
+        :param fillers: dictionary mapping placeholders in the profile's preamble and header to their fillers.
+        :type fillers: dict [str, str]
         """
         self.name = name
         self.path = path
         self.profile = profile
         self.latex_questions = latex_questions
+        self.fillers = fillers
 
     @property
     def fullpath(self):
@@ -82,14 +85,14 @@ class LatexPdfBuilder:
                 latex_string += f'\\usepackage[{", ".join(options)}]{{{name}}}\n'
             else:
                 latex_string += f'\\usepackage{{{name}}}\n'
-        preamble = '\n' + self.profile.preamble + '\n\n'
+        preamble = '\n' + self.profile.filled_preamble(self.fillers) + '\n\n'
         for definition in custom_defs:
             preamble += definition + '\n'
         if custom_defs:
             preamble += '\n'
 
         latex_string += f'{preamble}\\begin{{document}}\n'
-        latex_string += f'{self.profile.header}\n'
+        latex_string += f'{self.profile.filled_header(self.fillers)}\n'
         for q in self.latex_questions:
             latex_string += f'\n{q.dumps()}\n'
         latex_string += '\n\\end{document}\n'
