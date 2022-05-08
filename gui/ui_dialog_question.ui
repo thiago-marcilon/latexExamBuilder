@@ -62,6 +62,9 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="whatsThis">
+          <string>Question's keywords for searching in the database.</string>
+         </property>
          <property name="text">
           <string>Keywords:</string>
          </property>
@@ -74,6 +77,9 @@
         <widget class="QLineEdit" name="lineedit_keywords">
          <property name="statusTip">
           <string/>
+         </property>
+         <property name="whatsThis">
+          <string>Question's keywords for searching in the database.</string>
          </property>
          <property name="inputMethodHints">
           <set>Qt::ImhLowercaseOnly</set>
@@ -93,6 +99,9 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="whatsThis">
+          <string>The question itself.</string>
          </property>
          <property name="text">
           <string>Text:</string>
@@ -116,10 +125,19 @@
            <height>200</height>
           </size>
          </property>
+         <property name="whatsThis">
+          <string>The question itself.</string>
+         </property>
+         <property name="placeholderText">
+          <string>The question itself.</string>
+         </property>
         </widget>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_3">
+         <property name="whatsThis">
+          <string>Packages required to compile the question. Definitions required to compile the question. These will be added to the packages used by the document.</string>
+         </property>
          <property name="text">
           <string>Required
 Packages:</string>
@@ -146,10 +164,16 @@ Packages:</string>
            <height>100</height>
           </size>
          </property>
+         <property name="whatsThis">
+          <string>Packages required to compile the question. Definitions required to compile the question. These will be added to the packages used by the document.</string>
+         </property>
         </widget>
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="label_4">
+         <property name="whatsThis">
+          <string>Definitions required to compile the question. These will be added to the preamble of the document.</string>
+         </property>
          <property name="text">
           <string>Required
 Definitions:</string>
@@ -175,6 +199,9 @@ Definitions:</string>
            <width>16777215</width>
            <height>150</height>
           </size>
+         </property>
+         <property name="whatsThis">
+          <string>Definitions required to compile the question. These will be added to the preamble of the document.</string>
          </property>
         </widget>
        </item>
