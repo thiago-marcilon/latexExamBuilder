@@ -97,11 +97,12 @@ class Profile:
         :return: the string consisting of the header filled according to fillers.
         :rtype: str
         """
-        header = self.header
-        for ph, fill in fillers.items():
-            if ph in self.__header_placeholders and fill.strip() != '':
-                header = header.replace('%'+ph+'%', fill)
-        return header
+        if fillers is not None:
+            header = self.header
+            for ph, fill in fillers.items():
+                if ph in self.__header_placeholders and fill.strip() != '':
+                    header = header.replace('%'+ph+'%', fill)
+            return header
 
     @classmethod
     def find_placeholders(cls, text):

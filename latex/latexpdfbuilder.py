@@ -32,6 +32,8 @@ class LatexPdfBuilder:
         self.profile = profile
         self.latex_questions = latex_questions
         self.fillers = fillers
+        if self.fillers is None:
+            self.fillers = {}
 
     @property
     def fullpath(self):
