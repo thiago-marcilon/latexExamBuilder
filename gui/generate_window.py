@@ -6,6 +6,7 @@ import latex.latexpdfbuilder as build
 import latex.profile as prof
 import os.path
 import qasync
+import asyncio
 
 
 class GenerateWindow(QMainWindow, gw.Ui_GenerateWindow):
@@ -43,7 +44,18 @@ class GenerateWindow(QMainWindow, gw.Ui_GenerateWindow):
         self.pushbutton_pdf.pressed.connect(self.__generate_pdf)
         self.pushbutton_tex_pdf.pressed.connect(self.__generate_tex_pdf)
 
-    def __generate_tex(self, checked=False):
+    @staticmethod
+    def __dialog_async_exec(dialog, mode):
+        dialog.setModal(True)
+        dialog.setAcceptMode(mode)
+        future = asyncio.get_running_loop().create_future()
+        dialog.finished.connect(lambda r: future.set_result(r))
+        dialog.open()
+        dialog.setVisible(True)
+        return future
+
+    @qasync.asyncSlot()
+    async def __generate_tex(self, checked=False):
         if self.__profile is None:
             QMessageBox.warning(self, 'No Profile Selected!', 'A profile must be selected.')
             return False
@@ -76,7 +88,12 @@ class GenerateWindow(QMainWindow, gw.Ui_GenerateWindow):
                 [hlayout.itemAt(3).widget().layout().itemAt(mand_ind, QFormLayout.FieldRole).widget().text().strip()
                  for mand_ind in range(hlayout.itemAt(3).widget().layout().rowCount())])
             latex_questions.append(prof.LatexQuestion(question, env_name, opt_options, mand_options))
-        tex_path = QFileDialog.getSaveFileName(self, "Save tex", os.getcwd(), "Latex files (*.tex)")[0]
+
+        dialog = QFileDialog(self, "Save tex", os.getcwd(), "Latex files (*.tex)")
+        result = await GenerateWindow.__dialog_async_exec(dialog, QFileDialog.AcceptSave)
+        tex_path = ''
+        if result == QFileDialog.Accepted and dialog.selectedFiles():
+            tex_path = dialog.selectedFiles()[0]
         if tex_path != '':
             self.current_builder = build.LatexPdfBuilder(os.path.basename(tex_path).removesuffix('.tex'),
                                                          os.path.dirname(tex_path),
@@ -86,12 +103,16 @@ class GenerateWindow(QMainWindow, gw.Ui_GenerateWindow):
                 QMessageBox.information(self, 'Success!', 'The tex file was generated with success!')
                 return True
             except Exception as err:
-                QMessageBox.critical(self, 'Error!', err.args[0])
+                QMessageBox.critical(self, 'Error!', str(err.args))
                 return False
 
     @qasync.asyncSlot()
     async def __generate_pdf(self, checked=False):
-        tex_path = QFileDialog.getOpenFileName(self, "Compile tex", os.getcwd(), "Latex files (*.tex)")[0]
+        dialog = QFileDialog(self, "Compile tex", os.getcwd(), "Latex files (*.tex)")
+        result = await GenerateWindow.__dialog_async_exec(dialog, QFileDialog.AcceptOpen)
+        tex_path = ''
+        if result == QFileDialog.Accepted and dialog.selectedFiles():
+            tex_path = dialog.selectedFiles()[0]
         if tex_path != '':
             self.current_builder = build.LatexPdfBuilder(os.path.basename(tex_path).removesuffix('.tex'),
                                                          os.path.dirname(tex_path))
@@ -101,19 +122,20 @@ class GenerateWindow(QMainWindow, gw.Ui_GenerateWindow):
                 await self.current_builder.pdf_preview()
                 return True
             except Exception as err:
-                QMessageBox.critical(self, 'Error!', err.args[0])
+                QMessageBox.critical(self, 'Error!', str(err.args))
                 return False
 
     @qasync.asyncSlot()
     async def __generate_tex_pdf(self, checked=False):
-        if self.__generate_tex():
+        result = await self.__generate_tex()
+        if result:
             try:
                 self.current_builder.generate_pdf()
                 QMessageBox.information(self, 'Success!', 'The pdf file was generated with success!')
                 await self.current_builder.pdf_preview()
                 return True
             except Exception as err:
-                QMessageBox.critical(self, 'Error!', err.args[0])
+                QMessageBox.critical(self, 'Error!', str(err.args))
                 return False
 
     @property
@@ -125,7 +147,7 @@ class GenerateWindow(QMainWindow, gw.Ui_GenerateWindow):
         try:
             self.__profile.load()
         except Exception as err:
-            QMessageBox.critical(self, 'Error!', err.args[0])
+            QMessageBox.critical(self, 'Error!', str(err.args))
             self.combobox_profile.setCurrentIndex(-1)
         else:
             if self.groupbox_placeholders is not None:
@@ -151,10 +173,10 @@ class GenerateWindow(QMainWindow, gw.Ui_GenerateWindow):
                 combobox_env_question.addItems([env for env, _ in self.__profile.question_environment_list])
                 hlayout.addWidget(combobox_env_question)
 
-                def change_environment(layout):
+                def change_environment(playout):
                     def slot_change_environment(current_index):
-                        for ind in range(layout.count() - 1, 1, -1):
-                            layout.removeWidget(layout.itemAt(ind).widget())
+                        for ind in range(playout.count() - 1, 1, -1):
+                            playout.removeWidget(playout.itemAt(ind).widget())
 
                         group_box_opt = QGroupBox('Optional arguments', self)
                         group_box_opt.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
@@ -165,7 +187,7 @@ class GenerateWindow(QMainWindow, gw.Ui_GenerateWindow):
                             for ind in range(self.__profile.question_environment_list[current_index][1][0]):
                                 formlayout_opt.addRow(f'Argument {ind + 1}: ', QLineEdit())
                         group_box_opt.setLayout(formlayout_opt)
-                        layout.addWidget(group_box_opt)
+                        playout.addWidget(group_box_opt)
 
                         group_box_mand = QGroupBox('Mandatory arguments', self)
                         group_box_mand.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
@@ -176,7 +198,7 @@ class GenerateWindow(QMainWindow, gw.Ui_GenerateWindow):
                             for ind in range(self.__profile.question_environment_list[current_index][1][1]):
                                 formlayout_mand.addRow(f'Argument {ind + 1}: ', QLineEdit())
                         group_box_mand.setLayout(formlayout_mand)
-                        layout.addWidget(group_box_mand)
+                        playout.addWidget(group_box_mand)
 
                     return slot_change_environment
 
