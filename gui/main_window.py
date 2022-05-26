@@ -130,7 +130,7 @@ class MainWindow(QMainWindow, mw.Ui_MainWindow):
                 try:
                     setts.dump()
                 except Exception as err:
-                    QMessageBox.critical(self, 'Error!', err.args[0])
+                    QMessageBox.critical(self, 'Error!', str(err.args))
 
         settings.finished.connect(receive_answer)
         settings.open()
@@ -152,7 +152,7 @@ class MainWindow(QMainWindow, mw.Ui_MainWindow):
         try:
             await builder.temp_pdf_preview()
         except Exception as err:
-            QMessageBox.critical(self, 'Latex Error!', err.args[0])
+            QMessageBox.critical(self, 'Latex Error!', str(err.args))
 
     def __delete_all_selected(self, checked=False):
         button = QMessageBox.question(self, 'Unselect questions', 'Are you sure you want to unselect these questions?')
@@ -167,7 +167,7 @@ class MainWindow(QMainWindow, mw.Ui_MainWindow):
         try:
             await self.preview_selected_items(selected_items, self.simplemodel)
         except Exception as err:
-            QMessageBox.critical(self, 'Latex Error!', err.args[0])
+            QMessageBox.critical(self, 'Latex Error!', str(err.args))
 
     def __delete_all_search(self, checked=False):
         button = QMessageBox.question(self, 'Delete questions',
@@ -178,7 +178,7 @@ class MainWindow(QMainWindow, mw.Ui_MainWindow):
             try:
                 self.dbmodel.remove(selected_items)
             except Exception as err:
-                QMessageBox.critical(self, 'Error!', err.args[0])
+                QMessageBox.critical(self, 'Error!', str(err.args))
 
     def __add_selected_search(self, checked=False):
         selected_items = self.tableview_search.selectionModel().selectedRows()
@@ -193,7 +193,7 @@ class MainWindow(QMainWindow, mw.Ui_MainWindow):
         try:
             await self.preview_selected_items(selected_items, self.dbmodel)
         except Exception as err:
-            QMessageBox.critical(self, 'Latex Error!', err.args[0])
+            QMessageBox.critical(self, 'Latex Error!', str(err.args))
 
     def open_context_menu_search(self, pos):
         table = self.tableview_search
@@ -244,7 +244,7 @@ class MainWindow(QMainWindow, mw.Ui_MainWindow):
             try:
                 profile.load()
             except Exception as err:
-                QMessageBox.critical(self, 'Error!', err.args[0])
+                QMessageBox.critical(self, 'Error!', str(err.args))
             else:
                 self.__diag_new_edit_profile(False, profile)
 
@@ -257,7 +257,7 @@ class MainWindow(QMainWindow, mw.Ui_MainWindow):
                 try:
                     ret_profile.dump()
                 except Exception as err:
-                    QMessageBox.critical(self, 'Error!', err.args[0])
+                    QMessageBox.critical(self, 'Error!', str(err.args))
 
         dialog_profile.finished.connect(receive_answer)
         dialog_profile.open()
@@ -276,7 +276,7 @@ class MainWindow(QMainWindow, mw.Ui_MainWindow):
                         else:
                             self.dbmodel.edit_question(ret_keywords, ret_text, ret_pckg_req, ret_defs_req, index)
                     except Exception as err:
-                        QMessageBox.critical(self, 'Error!', err.args[0])
+                        QMessageBox.critical(self, 'Error!', str(err.args))
 
             dialog_question.finished.connect(receive_answer)
             dialog_question.open()
@@ -304,7 +304,7 @@ class MainWindow(QMainWindow, mw.Ui_MainWindow):
                 try:
                     self.dbmodel.remove(selected_items)
                 except Exception as err:
-                    QMessageBox.critical(self, 'Error!', err.args[0])
+                    QMessageBox.critical(self, 'Error!', str(err.args))
 
     def key_press_selectedtable(self, event):
         if event.key() == qcore.Qt.Key_Delete:
@@ -338,7 +338,7 @@ class MainWindow(QMainWindow, mw.Ui_MainWindow):
             self.dbmodel.load(database_path)
             self.setWindowTitle(f"Latex Exam Builder: {os.path.basename(database_path).removesuffix('.json')}")
         except Exception as err:
-            QMessageBox.critical(self, 'Error!', err.args[0])
+            QMessageBox.critical(self, 'Error!', str(err.args))
 
     def __load_database(self):
         database_path = QFileDialog.getOpenFileName(self, "Load Database", os.getcwd(), "Database Files (*.json)")[0]
@@ -347,7 +347,7 @@ class MainWindow(QMainWindow, mw.Ui_MainWindow):
                 self.dbmodel.load(database_path)
                 self.setWindowTitle(f"Latex Exam Builder: {os.path.basename(database_path).removesuffix('.json')}")
             except Exception as err:
-                QMessageBox.critical(self, 'Error!', err.args[0])
+                QMessageBox.critical(self, 'Error!', str(err.args))
 
     def __advanced_search(self, checked=False):
         if self.dbmodel.is_loaded():
@@ -369,7 +369,7 @@ class MainWindow(QMainWindow, mw.Ui_MainWindow):
                     try:
                         self.dbmodel.search_by_keywords_advanced(search_str)
                     except Exception as err:
-                        QMessageBox.critical(self, 'Error!', err.args[0])
+                        QMessageBox.critical(self, 'Error!', str(err.args))
         else:
             QMessageBox.critical(self, 'No database is loaded!', 'A database must be loaded first before a search.')
 
@@ -383,6 +383,6 @@ class MainWindow(QMainWindow, mw.Ui_MainWindow):
                 else:
                     self.dbmodel.search_by_keywords_simple(self.lineedit_search.text())
             except Exception as err:
-                QMessageBox.critical(self, 'Error!', err.args[0])
+                QMessageBox.critical(self, 'Error!', str(err.args))
         else:
             QMessageBox.critical(self, 'No database is loaded!', 'A database must be loaded first before a search.')
