@@ -83,9 +83,10 @@ class Profile:
         :rtype: str
         """
         preamble = self.preamble
-        for ph, fill in fillers.items():
-            if ph in self.__preamble_placeholders and fill.strip() != '':
-                preamble = preamble.replace('%'+ph+'%', fill)
+        if fillers is not None:
+            for ph, fill in fillers.items():
+                if ph in self.__preamble_placeholders and fill.strip() != '':
+                    preamble = preamble.replace('%'+ph+'%', fill)
         return preamble
 
     def filled_header(self, fillers):
@@ -97,12 +98,12 @@ class Profile:
         :return: the string consisting of the header filled according to fillers.
         :rtype: str
         """
+        header = self.header
         if fillers is not None:
-            header = self.header
             for ph, fill in fillers.items():
                 if ph in self.__header_placeholders and fill.strip() != '':
                     header = header.replace('%'+ph+'%', fill)
-            return header
+        return header
 
     @classmethod
     def find_placeholders(cls, text):
