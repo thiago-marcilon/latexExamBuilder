@@ -146,7 +146,7 @@ class TestLatexPdfBuilder:
 
     def test_generate_tex(self):
         self.builder.generate_tex()
-        assert os.path.getsize(self.builder.fullpath + ".tex") == 1797
+        assert os.path.getsize(self.builder.fullpath + ".tex") == 1741
         with open(self.builder.fullpath + ".tex", encoding="utf-8") as tex:
             file_dumps = tex.read()
         assert file_dumps in self.expected_dumps
