@@ -32,13 +32,14 @@ class GenerateWindow(QMainWindow, gw.Ui_GenerateWindow):
             self.verticallayout_questions.addLayout(horizontallayout_question)
 
         path = setts.profile_default_path
-        profiles_list = [file.removesuffix('.prof') for file in os.listdir(path)
-                         if os.path.isfile(os.path.join(path, file)) and file.endswith('.prof')]
-        if len(profiles_list) > 0:
-            self.combobox_profile.addItems(profiles_list)
-            self.combobox_profile.setCurrentIndex(-1)
-            self.combobox_profile.currentTextChanged.connect(self.__change_profile)
-            self.combobox_profile.setCurrentIndex(0)
+        if os.path.isdir(path):
+            profiles_list = [file.removesuffix('.prof') for file in os.listdir(path)
+                             if os.path.isfile(os.path.join(path, file)) and file.endswith('.prof')]
+            if len(profiles_list) > 0:
+                self.combobox_profile.addItems(profiles_list)
+                self.combobox_profile.setCurrentIndex(-1)
+                self.combobox_profile.currentTextChanged.connect(self.__change_profile)
+                self.combobox_profile.setCurrentIndex(0)
 
         self.pushbutton_tex.pressed.connect(self.__generate_tex)
         self.pushbutton_pdf.pressed.connect(self.__generate_pdf)

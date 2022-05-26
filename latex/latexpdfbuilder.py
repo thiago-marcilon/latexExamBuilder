@@ -49,6 +49,8 @@ class LatexPdfBuilder:
         """
         if not setts.pdf_viewer_path:
             raise LatexCompileError("Pdf viewer application is not set.")
+        elif not os.path.isfile(setts.pdf_viewer_path):
+            raise LatexCompileError("Pdf viewer not found in the specified path.")
         path = self.__select_filepath(filepath)
         proc = await asyncio.create_subprocess_exec(setts.pdf_viewer_path, path + '.pdf')
         await proc.wait()
@@ -57,6 +59,8 @@ class LatexPdfBuilder:
         """Builds a temporary tex and pdf of the document and opens the pdf with the reader selected in the settings."""
         if not setts.pdf_viewer_path:
             raise LatexCompileError("Pdf viewer application is not set.")
+        elif not os.path.isfile(setts.pdf_viewer_path):
+            raise LatexCompileError("Pdf viewer not found in the specified path.")
         with tempfile.TemporaryDirectory('_dir', 'temp_', './/', True) as tmpdirname:
             fullpath = os.path.abspath(os.path.join(tmpdirname, self.name))
             self.generate_tex(fullpath)
