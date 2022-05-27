@@ -1,11 +1,12 @@
 import pytest
 import common.question as quest
 import latex.profile as prof
+import os
 
 
 class TestProfile:
     def test_dump_load(self):
-        profile = prof.Profile('prof1', 'resources')
+        profile = prof.Profile('prof1', '')
         profile.set_document_class('classname1', ('opt1', 'opt2'))
         profile.add_package('pckg1', ('opt1', 'opt2'))
         profile.add_package('pckg2', ())
@@ -14,13 +15,14 @@ class TestProfile:
         profile.preamble = 'thisisapreamble'
         profile.header = 'thisisaheader'
         profile.dump()
-        profile2 = prof.Profile('prof1', 'resources')
+        profile2 = prof.Profile('prof1', '')
         profile2.load()
         assert profile.document_class_name == profile2.document_class_name and \
                profile.document_class_options == profile2.document_class_options and \
                profile.preamble == profile2.preamble and profile.header == profile2.header and \
                profile.question_environment_list == profile2.question_environment_list and \
                profile.package_list == profile2.package_list
+        os.remove(os.path.abspath(os.path.join(os.path.abspath(''), 'prof1.prof')))
 
     def test_find_placeholders(self):
         assert prof.Profile.find_placeholders('%%thi%s%\ni%s\na%%%ph1 %\n%ok%') == {'s', 'ph1 ', 'ok'} and\

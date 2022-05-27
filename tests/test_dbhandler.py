@@ -7,11 +7,11 @@ import pytest
 @pytest.fixture(autouse=True, scope='class')
 def context_class(request):
     try:
-        os.remove(os.path.abspath(os.path.join("resources", 'test_db.json')))
+        os.remove(os.path.abspath(os.path.join("", 'test_db.json')))
     except FileNotFoundError:
         pass
     finally:
-        request.cls.db = dbh.DBHandler('./resources/test_db.json')
+        request.cls.db = dbh.DBHandler('./test_db.json')
         request.cls.questions = [quest.Question(['key1', 'key2'], 'texttexttext',
                                                 {"pckg1": ('opt1', 'opt2'), "pckg2": ()}, ('def1', 'def2')),
                                  quest.Question(['key1', 'key3'], 'texttexttext2',

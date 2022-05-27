@@ -9,7 +9,7 @@ import glob
 
 @pytest.fixture(autouse=True, scope='class')
 def context_class(request):
-    profile = prof.Profile('profile_TestLatexPdfBuilder_dumps', 'resources')
+    profile = prof.Profile('profile_TestLatexPdfBuilder_dumps', '')
     profile.set_document_class('article', ('oneside', '12pt', 'a4paper'))
     profile.add_package('float')
     profile.add_package('babel')
@@ -61,7 +61,7 @@ def context_class(request):
     latex_questions = [prof.LatexQuestion(question1, 'question', (), ()),
                        prof.LatexQuestion(question2, 'question', ('1,5',), ())]
     fillers = {'date': '29/02/1600', 'assess_number': '1'}
-    builder = bld.LatexPdfBuilder('profile_TestLatexPdfBuilder_dumps', 'resources', profile, latex_questions, fillers)
+    builder = bld.LatexPdfBuilder('profile_TestLatexPdfBuilder_dumps', '', profile, latex_questions, fillers)
 
     dcs = ['\\documentclass[a4paper, 12pt, oneside]{article}\n',
            '\\documentclass[a4paper, oneside, 12pt]{article}\n',
@@ -146,7 +146,6 @@ class TestLatexPdfBuilder:
 
     def test_generate_tex(self):
         self.builder.generate_tex()
-        assert os.path.getsize(self.builder.fullpath + ".tex") == 1741
         with open(self.builder.fullpath + ".tex", encoding="utf-8") as tex:
             file_dumps = tex.read()
         assert file_dumps in self.expected_dumps
