@@ -19,6 +19,8 @@ preview_profile_preamble = r'\newenvironment{question}{' \
                            r'}'
 preview_profile_header = ''
 preview_profile_environments = {"question": (0, 0)}
+font_size_data = 8
+font_size_header = 8
 
 
 def search_path(oss, name_path_list):
@@ -83,22 +85,26 @@ def dump():
     """Stores the contents of the setting variables to the file with name in the settings_file_name variable"""
     global profile_file_max_size, profile_default_path, pdf_viewer_path, \
         preview_profile_document_class, preview_profile_document_options, preview_profile_packages_required, \
-        preview_profile_preamble, preview_profile_header, preview_profile_environments
+        preview_profile_preamble, preview_profile_header, preview_profile_environments, \
+        font_size_data, font_size_header
     json_dict = {"profile_file_max_size": profile_file_max_size, "profile_default_path": profile_default_path,
                  "pdf_viewer_path": pdf_viewer_path, "preview_profile_document_class": preview_profile_document_class,
                  "preview_profile_document_options": preview_profile_document_options,
                  "preview_profile_packages_required": preview_profile_packages_required,
                  "preview_profile_preamble": preview_profile_preamble, "preview_profile_header": preview_profile_header,
-                 "preview_profile_environments": preview_profile_environments}
+                 "preview_profile_environments": preview_profile_environments,
+                 "font_size_data": font_size_data,
+                 "font_size_header": font_size_header}
     with open(os.path.abspath(settings_file_name), 'w', encoding="utf-8") as profile_file:
         json.dump(json_dict, profile_file, ensure_ascii=False)
 
 
 def load():
     """Loads the contents of the file with name in the settings_file_name variable to the setting variables"""
-    global profile_file_max_size, profile_default_path, pdf_viewer_path, settings_file_name, \
+    global profile_file_max_size, profile_default_path, pdf_viewer_path, \
         preview_profile_document_class, preview_profile_document_options, preview_profile_packages_required, \
-        preview_profile_preamble, preview_profile_header, preview_profile_environments
+        preview_profile_preamble, preview_profile_header, preview_profile_environments, \
+        font_size_data, font_size_header
     if not os.path.exists(os.path.abspath(os.path.join('./', settings_file_name))):
         dump()
     else:
@@ -108,8 +114,12 @@ def load():
         profile_default_path = json_dict.get('profile_default_path', profile_default_path)
         pdf_viewer_path = json_dict.get('pdf_viewer_path', pdf_viewer_path)
         preview_profile_document_class = json_dict.get('preview_profile_document_class', preview_profile_document_class)
-        preview_profile_document_options = json_dict.get('preview_profile_document_options', preview_profile_document_options)
-        preview_profile_packages_required = json_dict.get('preview_profile_packages_required', preview_profile_packages_required)
+        preview_profile_document_options = json_dict.get('preview_profile_document_options',
+                                                         preview_profile_document_options)
+        preview_profile_packages_required = json_dict.get('preview_profile_packages_required',
+                                                          preview_profile_packages_required)
         preview_profile_preamble = json_dict.get('preview_profile_preamble', preview_profile_preamble)
         preview_profile_header = json_dict.get('preview_profile_header', preview_profile_header)
         preview_profile_environments = json_dict.get('preview_profile_environments', preview_profile_environments)
+        font_size_data = json_dict.get('font_size_data', font_size_data)
+        font_size_header = json_dict.get('font_size_header', font_size_header)

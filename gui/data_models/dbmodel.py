@@ -1,6 +1,8 @@
 import PyQt5.QtCore as qcore
+import PyQt5.Qt as qt
 import database.dbhandler as dtb
 import common.question as ques
+import common.settings as setts
 
 
 class DBModel(qcore.QAbstractTableModel):
@@ -10,7 +12,23 @@ class DBModel(qcore.QAbstractTableModel):
         self.__headers_text = ['Id', 'Keywords', 'Question Text', '', '']
         self.__dbhandler = None
         self.__question_list = []
-        self.__font_size = 8
+        self.__font_data = qt.QFont()
+        self.__font_header = qt.QFont()
+        self.__font_data.setPointSize(setts.font_size_data)
+        self.__font_header.setPointSize(setts.font_size_header)
+        self.__font_header.setBold(True)
+
+    def set_font_size_data(self):
+        if self.__font_data.pointSize() != setts.font_size_data:
+            self.beginResetModel()
+            self.__font_data.setPointSize(setts.font_size_data)
+            self.endResetModel()
+
+    def set_font_size_header(self):
+        if self.__font_header.pointSize() != setts.font_size_header:
+            self.beginResetModel()
+            self.__font_header.setPointSize(setts.font_size_header)
+            self.endResetModel()
 
     def remove(self, indxmodel_list):
         indx_list = [item.row() for item in indxmodel_list]
@@ -100,10 +118,7 @@ class DBModel(qcore.QAbstractTableModel):
         elif role == qcore.Qt.TextAlignmentRole:
             return qcore.Qt.Alignment(qcore.Qt.AlignCenter)
         elif role == qcore.Qt.FontRole:
-            font = self.parent().tableview_search.font()
-            font.setPointSize(self.__font_size)
-            font.setBold(True)
-            return font
+            return self.__font_header
         return qcore.QVariant()
 
     def rowCount(self, parent=qcore.QModelIndex()):
@@ -137,9 +152,7 @@ class DBModel(qcore.QAbstractTableModel):
         elif role == qcore.Qt.TextAlignmentRole:
             return qcore.Qt.Alignment(qcore.Qt.AlignCenter)
         elif role == qcore.Qt.FontRole:
-            font = self.parent().tableview_search.font()
-            font.setPointSize(self.__font_size)
-            return font
+            return self.__font_data
         else:
             return qcore.QVariant()
 

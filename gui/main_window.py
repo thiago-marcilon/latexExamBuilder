@@ -127,6 +127,12 @@ class MainWindow(QMainWindow, mw.Ui_MainWindow):
                 setts.profile_default_path = settings.lineedit_profile_default_directory.text()
                 setts.pdf_viewer_path = settings.lineedit_path_pdf_viewer.text()
                 setts.profile_file_max_size = int(settings.spinbox_prof_max_size.text())
+                setts.font_size_header = int(settings.spinbox_header_font_size.text())
+                setts.font_size_data = int(settings.spinbox_data_font_size.text())
+                self.dbmodel.set_font_size_data()
+                self.dbmodel.set_font_size_header()
+                self.simplemodel.set_font_size_data()
+                self.simplemodel.set_font_size_header()
                 try:
                     setts.dump()
                 except Exception as err:

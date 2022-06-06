@@ -21,6 +21,8 @@ class SettingsDiag(QDialog, uisetts.Ui_Settings):
         self.lineedit_path_pdf_viewer.setReadOnly(True)
         self.lineedit_path_pdf_viewer.setText(setts.pdf_viewer_path)
         self.spinbox_prof_max_size.setValue(setts.profile_file_max_size)
+        self.spinbox_header_font_size.setValue(setts.font_size_header)
+        self.spinbox_data_font_size.setValue(setts.font_size_data)
         self.pushbutton_browse_prof_dir.pressed.connect(self.__fill_prof_dir)
         self.pushbutton_browse_pdf_viewer.pressed.connect(self.__fill_pdf_viewer)
         self.pushbutton_preview_profile.pressed.connect(self.__fill_preview_profile)
