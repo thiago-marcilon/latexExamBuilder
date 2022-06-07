@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'gui\ui_main_window.ui'
+# Form implementation generated from reading ui file 'ui_main_window.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.6
 #
@@ -75,7 +75,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
         self.groupBox.setSizePolicy(sizePolicy)
-        self.groupBox.setMinimumSize(QtCore.QSize(0, 70))
+        self.groupBox.setMinimumSize(QtCore.QSize(0, 80))
         self.groupBox.setMaximumSize(QtCore.QSize(16777215, 70))
         self.groupBox.setObjectName("groupBox")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.groupBox)
@@ -165,7 +165,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1100, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1100, 22))
         self.menubar.setAutoFillBackground(True)
         self.menubar.setStyleSheet("")
         self.menubar.setObjectName("menubar")
